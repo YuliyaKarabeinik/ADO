@@ -1,0 +1,23 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="IOrderRepository.cs" />
+    <Compile Remove="Order.cs" />
+    <Compile Remove="OrderDetail.cs" />
+    <Compile Remove="OrderRepository.cs" />
+    <Compile Remove="OrderStatus.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="IOrderRepository.cs" />
+    <None Include="Order.cs" />
+    <None Include="OrderDetail.cs" />
+    <None Include="OrderRepository.cs" />
+    <None Include="OrderStatus.cs" />
+  </ItemGroup>
+
+</Project>

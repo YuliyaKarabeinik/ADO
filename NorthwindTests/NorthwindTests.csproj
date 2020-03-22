@@ -53,6 +53,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Configuration\Config.cs" />
+    <Compile Include="OrdersExtensions.cs" />
     <Compile Include="OrdersTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -62,8 +63,12 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\ADO\ADO.csproj">
-      <Project>{3E1F69FE-9F40-4CD4-813F-B1ED77825736}</Project>
+      <Project>{3e1f69fe-9f40-4cd4-813f-b1ed77825736}</Project>
       <Name>ADO</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Common\Common.csproj">
+      <Project>{0ac26e16-04ee-4f2c-a3d5-862c907c5067}</Project>
+      <Name>Common</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets" Condition="Exists('$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets')" />

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using ADO;
+using ADO.Models;
 using FluentAssertions;
 using NUnit.Framework;
 using static NorthwindTests.Configuration.Config;
@@ -21,17 +22,41 @@ namespace NorthwindTests
         [Test]
         public void GetOrdersTest()
         {
-            var orders = orderRepository.GetOrders();
+            var orders = orderRepository.Get();
             orders.Should().NotBeEmpty();
         }
 
         [Test]
         public void GetOrderByIdTest()
         {
-            var orders = orderRepository.GetOrders();
+            var orderId = orderRepository.Get().FirstOrDefault().OrderId;
+            var order = orderRepository.GetById(orderId);
 
-            var order = orderRepository.GetOrderById(10285);
-            //orders.Should().NotBeEmpty();
+            foreach (var orderDetail in order.OrderDetails)
+            {
+                orderDetail.Product.ProductId.Should().BePositive();
+                orderDetail.Product.ProductName.Should().NotBeNullOrEmpty();
+            }
+        }
+
+        [Test]
+        public void AddOrderTest()
+        {
+            var orderModel = OrdersExtensions.GenerateOrderModel();
+            orderRepository.Create(orderModel);
+
+            var order = orderRepository.Get().Where(ordr => ordr.ShippedDate == orderModel.ShippedDate);
+            order.Should().NotBeNull();
+        }
+
+        [Test]
+        public void UpdateOrderTest()
+        {
+            var order = orderRepository.Get().FirstOrDefault();
+            var country = order.ShipCountry = "Belgium";
+            orderRepository.Update(order);
+            var modifiedOrder = orderRepository.GetById(order.OrderId);
+            modifiedOrder.ShipCountry.Should().BeEquivalentTo(country);
         }
     }
 }

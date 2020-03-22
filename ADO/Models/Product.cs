@@ -1,6 +1,6 @@
-﻿namespace ADO
+﻿namespace ADO.Models
 {
-    public class Product
+    public class Product : BaseViewModel
     {
         public int ProductId { get; set; }
 

@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Data.Common;
-using System.Reflection;
 using ADO.Models;
 
 namespace ADO
@@ -202,17 +201,33 @@ namespace ADO
         }
         public void Delete(int id)
         {
-            throw new NotImplementedException();
+            var initialOrder = GetById(id);
+            if (initialOrder.OrderStatus == OrderStatus.Completed) return;
+
+            using (var connection = ProviderFactory.CreateConnection())
+            {
+                connection.ConnectionString = ConnectionString;
+                connection.Open();
+
+                using (var command = connection.CreateCommand())
+                {
+                    command.CommandText = $@"DELETE FROM [Order Details] WHERE OrderID = {id}
+                                            DELETE FROM Orders WHERE OrderID = {id}";
+
+                    command.CommandType = CommandType.Text;
+                    command.ExecuteNonQuery();
+                }
+            }
         }
 
         private Order ReadOrderDefaultData(DbDataReader reader, Order order)
         {
             order.OrderId = reader.GetSafe<int>("OrderID");
             order.CustomerID = reader.GetSafe<string>("CustomerID");
-            order.EmployeeID = reader.GetSafe<int>("EmployeeID");
-            order.OrderDate = reader.GetSafe<DateTime>("OrderDate");
-            order.RequiredDate = reader.GetSafe<DateTime>("RequiredDate");
-            order.ShippedDate = reader.GetSafe<DateTime>("ShippedDate");
+            order.EmployeeID = reader.GetNullableInt("EmployeeID");
+            order.OrderDate = reader.GetNullableDateTime("OrderDate");
+            order.RequiredDate = reader.GetNullableDateTime("RequiredDate");
+            order.ShippedDate = reader.GetNullableDateTime("ShippedDate");
             order.ShipVia = reader.GetSafe<int>("ShipVia");
             order.Freight = reader.GetSafe<decimal>("Freight");
             order.ShipName = reader.GetSafe<string>("ShipName");

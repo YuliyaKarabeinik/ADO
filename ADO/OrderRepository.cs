@@ -93,8 +93,8 @@ namespace ADO
                         Discount,
                         Products.ProductID, ProductName,
                         CASE 
-                        	  WHEN OrderDate IS NULL THEN 'New'
-                        	  WHEN ShippedDate IS NULL THEN 'InProgress'
+                        	  WHEN OrderDate IS NULL and ShippedDate IS NULL THEN 'New'
+                        	  WHEN OrderDate IS NOT NULL and ShippedDate IS NULL THEN 'InProgress'
                         	  WHEN ShippedDate IS NOT NULL THEN 'Completed'
                         END AS Status
                         FROM Orders
@@ -178,8 +178,7 @@ namespace ADO
 
                 using (var command = connection.CreateCommand())
                 {
-                    command.CommandText = $@"
-                        UPDATE Orders
+                    command.CommandText = $@"UPDATE Orders
                         SET CustomerID=@CustomerID, EmployeeID=@EmployeeID,
                         RequiredDate=@RequiredDate, ShipVia=@ShipVia,
                         Freight=@Freight,ShipName=@ShipName,ShipAddress=@ShipAddress,ShipCity=@ShipCity,
@@ -214,6 +213,46 @@ namespace ADO
                     command.CommandText = $@"DELETE FROM [Order Details] WHERE OrderID = {id}
                                             DELETE FROM Orders WHERE OrderID = {id}";
 
+                    command.CommandType = CommandType.Text;
+                    command.ExecuteNonQuery();
+                }
+            }
+        }
+
+        public void ChangeToInProgress(int id)
+        {
+            var initialOrder = GetById(id);
+            if (initialOrder.OrderStatus == OrderStatus.InProgress || initialOrder.OrderStatus == OrderStatus.Completed) return;
+            using (var connection = ProviderFactory.CreateConnection())
+            {
+                connection.ConnectionString = ConnectionString;
+                connection.Open();
+
+                using (var command = connection.CreateCommand())
+                {
+                    command.CommandText = $@"UPDATE Orders
+                        SET OrderDate='{DateTime.Now}'
+                        WHERE OrderID = {id}";
+                    command.CommandType = CommandType.Text;
+                    command.ExecuteNonQuery();
+                }
+            }
+        }
+
+        public void ChangeToCompleted(int id)
+        {
+            var initialOrder = GetById(id);
+            if (initialOrder.OrderStatus == OrderStatus.Completed) return;
+            using (var connection = ProviderFactory.CreateConnection())
+            {
+                connection.ConnectionString = ConnectionString;
+                connection.Open();
+
+                using (var command = connection.CreateCommand())
+                {
+                    command.CommandText = $@"UPDATE Orders
+                        SET ShippedDate='{DateTime.Now}'
+                        WHERE OrderID = {id}";
                     command.CommandType = CommandType.Text;
                     command.ExecuteNonQuery();
                 }

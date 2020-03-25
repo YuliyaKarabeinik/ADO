@@ -88,5 +88,24 @@ namespace NorthwindTests
             var order = orderRepository.Get().FirstOrDefault(ordr => ordr.OrderId == orderId);
             order.Should().NotBeNull();
         }
+
+        [Test]
+        public void ChangeToInProgressTest()
+        {
+            var orderId = orderRepository.Get().FirstOrDefault(ordr => ordr.OrderStatus == OrderStatus.New).OrderId;
+
+            orderRepository.ChangeToInProgress(orderId);
+            var order = orderRepository.Get().FirstOrDefault(ordr => ordr.OrderId == orderId);
+            order.OrderStatus.Should().BeEquivalentTo(OrderStatus.InProgress);
+        }
+
+        [Test]
+        public void ChangeToCompletedTest()
+        {
+            var orderId = orderRepository.Get().FirstOrDefault(ordr => ordr.OrderStatus == OrderStatus.InProgress).OrderId;
+            orderRepository.ChangeToCompleted(orderId);
+            var order = orderRepository.Get().FirstOrDefault(ordr => ordr.OrderId == orderId);
+            order.OrderStatus.Should().BeEquivalentTo(OrderStatus.Completed);
+        }
     }
 }

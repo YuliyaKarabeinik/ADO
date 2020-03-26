@@ -1,5 +1,6 @@
 ﻿using System;
 using ADO.Models;
+using ADO.Models.Order;
 
 namespace NorthwindTests
 {

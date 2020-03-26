@@ -1,7 +1,6 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 using ADO;
-using ADO.Models;
+using ADO.Models.Order;
 using Common;
 using FluentAssertions;
 using NUnit.Framework;
@@ -106,6 +105,22 @@ namespace NorthwindTests
             orderRepository.ChangeToCompleted(orderId);
             var order = orderRepository.Get().FirstOrDefault(ordr => ordr.OrderId == orderId);
             order.OrderStatus.Should().BeEquivalentTo(OrderStatus.Completed);
+        }
+
+        [Test]
+        public void SPCustOrderHistTest()
+        {
+            var customerId = orderRepository.Get().FirstOrDefault().CustomerID;
+            var custOrderHist = orderRepository.GetCustOrderHist(customerId);
+            custOrderHist.Should().NotBeNullOrEmpty();
+        }
+
+        [Test]
+        public void SPCustOrderDetailTest()
+        {
+            var orderId = orderRepository.Get().FirstOrDefault().OrderId;
+            var custOrderHist = orderRepository.GetCustOrderDetail(orderId);
+            custOrderHist.Should().NotBeNullOrEmpty();
         }
     }
 }

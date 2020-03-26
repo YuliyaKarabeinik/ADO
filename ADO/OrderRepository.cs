@@ -2,7 +2,10 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Data.Common;
+using System.Data.SqlClient;
 using ADO.Models;
+using ADO.Models.Order;
+using ADO.Models.Statistics;
 
 namespace ADO
 {
@@ -135,7 +138,7 @@ namespace ADO
                 }
             }
         }
-        
+
         public void Create(Order orderModel)
         {
             using (var connection = ProviderFactory.CreateConnection())
@@ -255,6 +258,72 @@ namespace ADO
                         WHERE OrderID = {id}";
                     command.CommandType = CommandType.Text;
                     command.ExecuteNonQuery();
+                }
+            }
+        }
+
+        public List<CustOrderHist> GetCustOrderHist(string customerId)
+        {
+            string spName = "dbo.CustOrderHist";
+            var custOrderHistList = new List<CustOrderHist>();
+            using (var connection = new SqlConnection(ConnectionString))
+            {
+                connection.ConnectionString = ConnectionString;
+                connection.Open();
+
+                using (var command = new SqlCommand(spName, connection))
+                {
+                    command.CommandType = CommandType.StoredProcedure;
+                    var customerIdParam = new SqlParameter("@CustomerID", customerId);
+                    command.Parameters.Add(customerIdParam);
+
+                    using (var reader = command.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            var custOrderHist = new CustOrderHist();
+                            custOrderHist.ProductName = reader.GetSafe<string>("ProductName");
+                            custOrderHist.Total = reader.GetSafe<int>("Total");
+
+                            custOrderHistList.Add(custOrderHist);
+                        }
+
+                        return custOrderHistList;
+                    }
+                }
+            }
+        }
+
+        public List<CustOrderDetail> GetCustOrderDetail(int orderId)
+        {
+            string spName = "dbo.CustOrdersDetail";
+            var custOrderDetailList = new List<CustOrderDetail>();
+            using (var connection = new SqlConnection(ConnectionString))
+            {
+                connection.Open();
+
+                using (var command = new SqlCommand(spName, connection))
+                {
+                    command.CommandType = CommandType.StoredProcedure;
+                    var customerIdParam = new SqlParameter("@OrderID", orderId);
+                    command.Parameters.Add(customerIdParam);
+
+                    using (var reader = command.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            var custOrderDetail = new CustOrderDetail();
+                            custOrderDetail.ProductName = reader.GetSafe<string>("ProductName");
+                            custOrderDetail.UnitPrice = reader.GetSafe<decimal>("UnitPrice");
+                            custOrderDetail.Quantity = reader.GetSafe<short>("Quantity");
+                            custOrderDetail.Discount = reader.GetSafe<int>("Discount");
+                            custOrderDetail.ExtendedPrice = reader.GetSafe<decimal>("ExtendedPrice");
+                            
+                            custOrderDetailList.Add(custOrderDetail);
+                        }
+
+                        return custOrderDetailList;
+                    }
                 }
             }
         }

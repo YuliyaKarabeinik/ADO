@@ -53,10 +53,12 @@
     <Compile Include="IOrderRepository.cs" />
     <Compile Include="IRepository.cs" />
     <Compile Include="Models\BaseViewModel.cs" />
-    <Compile Include="Models\Order.cs" />
-    <Compile Include="Models\OrderDetail.cs" />
+    <Compile Include="Models\Order\Order.cs" />
+    <Compile Include="Models\Order\OrderDetail.cs" />
+    <Compile Include="Models\Statistics\CustOrderDetail.cs" />
+    <Compile Include="Models\Statistics\CustOrderHist.cs" />
     <Compile Include="OrderRepository.cs" />
-    <Compile Include="Models\OrderStatus.cs" />
+    <Compile Include="Models\Order\OrderStatus.cs" />
     <Compile Include="Models\Product.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Utils\JsonUtilities.cs" />

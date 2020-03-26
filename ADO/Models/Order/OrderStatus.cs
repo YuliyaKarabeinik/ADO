@@ -1,4 +1,4 @@
-﻿namespace ADO.Models
+﻿namespace ADO.Models.Order
 {
     public enum OrderStatus
     {

@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace ADO.Models
+﻿namespace ADO.Models.Order
 {
     public class OrderDetail : BaseViewModel
     {
